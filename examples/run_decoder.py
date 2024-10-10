@@ -3,7 +3,7 @@ import nucleotide_transformer
 import haiku as hk
 import jax
 import jax.numpy as jnp
-from nucleotide_transformer.pretrained import load_pretrained_model
+from nucleotide_transformer.pretrained import get_pretrained_model
 import numpy as np
 import h5py
 import argparse
@@ -23,7 +23,7 @@ chrm = args.chrm
 h5_path = args.h5_path
 
 # Get pretrained model
-parameters, forward_fn, tokenizer, config = load_pretrained_model(
+parameters, forward_fn, tokenizer, config = get_pretrained_model(
     model_name=model_name,
     model_path=path,
     embeddings_layers_to_save=None,
@@ -32,7 +32,7 @@ parameters, forward_fn, tokenizer, config = load_pretrained_model(
 )
 
 embedding_to_save = range(1, config.num_layers + 1)
-parameters, forward_fn, tokenizer, config = load_pretrained_model(
+parameters, forward_fn, tokenizer, config = get_pretrained_model(
     model_name=model_name,
     model_path=path,
     embeddings_layers_to_save=embedding_to_save,
