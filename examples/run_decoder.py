@@ -6,9 +6,21 @@ import jax.numpy as jnp
 from nucleotide_transformer.pretrained import load_pretrained_model
 import numpy as np
 import h5py
+import argparse
 
-path=''
-model_name = '500M_multi_species_v2'
+# Parse command-line arguments
+parser = argparse.ArgumentParser(description='Run nucleotide transformer decoder.')
+parser.add_argument('--path', type=str, required=True, help='Path to the model')
+parser.add_argument('--model_name', type=str, required=True, help='Name of the model')
+parser.add_argument('--chrm', type=str, required=True, help='Chromosome to filter transcripts')
+parser.add_argument('--h5_path', type=str, required=True, help='Path to the HDF5 file')
+
+args = parser.parse_args()
+
+path = args.path
+model_name = args.model_name
+chrm = args.chrm
+h5_path = args.h5_path
 
 # Get pretrained model
 parameters, forward_fn, tokenizer, config = load_pretrained_model(
@@ -19,7 +31,7 @@ parameters, forward_fn, tokenizer, config = load_pretrained_model(
     max_positions=2048,
 )
 
-embedding_to_save=range(1, config.num_layers+1)
+embedding_to_save = range(1, config.num_layers + 1)
 parameters, forward_fn, tokenizer, config = load_pretrained_model(
     model_name=model_name,
     model_path=path,
@@ -32,16 +44,12 @@ forward_fn = hk.transform(forward_fn)
 
 print(config)
 
-
-#ith h5py.File('transcripts_database_test1.h5', 'r') as hdf:
-chrm='2'
-file = h5py.File('/home/noxatras/Desktop/nutr_tutorial/transcripts_database_test3.h5', 'r')
-transcripts = {file['transcript']['id'][i].decode('utf-8'): file['transcript']['sequence'][i].decode('utf-8') for i,j in enumerate(file['transcript']['id']) if file['transcript']['chrm'][i].decode('utf-8') ==chrm}
+file = h5py.File(h5_path, 'r')
+transcripts = {file['transcript']['id'][i].decode('utf-8'): file['transcript']['sequence'][i].decode('utf-8') for i, j in enumerate(file['transcript']['id']) if file['transcript']['chrm'][i].decode('utf-8') == chrm}
 file.close()
 
-
 sequences = [transcripts[k] for k in list(transcripts.keys())]
-id=[k for k in list(transcripts.keys())]
+id = [k for k in list(transcripts.keys())]
 print(sequences[0])
 print(id[0])
 tokens_ids = [b[1] for b in tokenizer.batch_tokenize(sequences)]
