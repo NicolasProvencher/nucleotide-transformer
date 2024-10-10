@@ -31,9 +31,6 @@ setup(
         "regex>=2022.1.18",
         "huggingface-hub>=0.23.0",
     ],
-    dependency_links=[
-        "https://storage.googleapis.com/jax-releases/jax_releases.html",
-    ],
     keywords=["Genomics", "Language Model", "Deep Learning", "JAX"],
     classifiers=[
         "Development Status :: 4 - Beta",
